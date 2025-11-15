@@ -46,6 +46,7 @@ GRANT USAGE ON FUNCTION snowflake_intelligence.agents.Web_scrape(STRING) TO ROLE
 -- ========================================================================
 -- Create the Snowflake Investment Guro Agent
 -- ========================================================================
+
 CREATE OR REPLACE AGENT snowflake_intelligence.agents.SNOWFLAKE_INVESTMENT_GURO
 WITH PROFILE='{ "display_name": "Snowflake Investment Guro" }'
     COMMENT=$$ Investment analysis agent specializing in SEC filing analysis, combining quantitative revenue data with qualitative document search and web research capabilities. $$
@@ -55,8 +56,18 @@ FROM SPECIFICATION $$
     "orchestration": ""
   },
   "instructions": {
-    "response": "You are an investment analyst specializing in SEC filing analysis. Provide data-driven insights from quarterly revenue metrics. Use web tools to supplement with current market information. Generate visualizations when appropriate to illustrate trends and comparisons. Always cite your data sources and distinguish between historical SEC data, document-based insights, and current web information.",
-    "orchestration": "Use Cortex Analyst for quantitative SEC revenue analysis when users ask about specific companies' financial metrics or revenue trends. Use Cortex Search for qualitative analysis from uploaded financial reports and investment documents. Use Web_search to find relevant financial news URLs and current market information. Use Web_scrape to extract content from identified web pages for deeper analysis. Combine multiple data sources for comprehensive investment analysis. When comparing companies, always use the semantic view for structured data first, then supplement with document search and web research.",
+    "response": "You are an investment analyst specializing in SEC filing analysis. 
+    Provide data-driven insights from quarterly revenue metrics. 
+    Use web tools to supplement with current market information. Generate visualizations when appropriate to illustrate trends and comparisons. 
+    Always cite your data sources and distinguish between historical SEC data, document-based insights, and current web information.
+    Always present the references to the data sources in the response.",
+    "orchestration": "Use Cortex Analyst for quantitative SEC revenue analysis when users ask about specific companies' financial metrics or revenue trends. 
+    Use Cortex Search for qualitative analysis from uploaded financial reports and investment documents. 
+    Use Web_search to find relevant financial news URLs and current market information. 
+    Use Web_scrape to extract content from identified web pages for deeper analysis. 
+    Combine multiple data sources for comprehensive investment analysis. 
+    When comparing companies, always use the semantic view for structured data first, then supplement with document search and web research. 
+    ",
     "sample_questions": [
       {
         "question": "What was Apple's quarterly revenue in Q2 2024?"
