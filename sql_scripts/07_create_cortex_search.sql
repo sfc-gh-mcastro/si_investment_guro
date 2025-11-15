@@ -1,21 +1,18 @@
 -- ========================================================================
--- Investment Analysis Agent - Cortex Search Services
+-- Investment Analysis Agent - Cortex Search Service
 -- ========================================================================
--- This script creates and configures Cortex Search services for investment analysis:
---   1. corp_mem: Custom search over uploaded documents (PDFs)
---   2. Company Event Transcripts: Snowflake's public data search service
+-- This script creates a Cortex Search service for vector search over
+-- the chunked document content.
 --
 -- Prerequisites:
 --   - DOCS_CHUNKS_TABLE populated with chunked text (06_create_document_stage.sql)
 --   - At least some documents uploaded and processed
 --   - Cortex Search enabled in your account
---   - SNOWFLAKE_PUBLIC_DATA_CORTEX_KNOWLEDGE_EXTENSIONS data share installed
 --
 -- Creates:
 --   - Cortex Search Service: corp_mem (corporate memory RAG search)
---   - Grants access to: COMPANY_EVENT_TRANSCRIPT_CORTEX_SEARCH_SERVICE
 --
--- Note: corp_mem creation will fail if DOCS_CHUNKS_TABLE is empty.
+-- Note: This script will fail if DOCS_CHUNKS_TABLE is empty.
 --       Upload and process documents first using the SQL in script 06.
 -- ========================================================================
 
@@ -50,24 +47,6 @@ AS (
 GRANT USAGE ON CORTEX SEARCH SERVICE corp_mem TO ROLE PUBLIC;
 
 -- ========================================================================
--- Configure Access to Company Event Transcript Search Service
--- ========================================================================
--- This is a pre-built Cortex Search service from Snowflake's public data
--- containing company earnings calls, investor presentations, and transcripts
--- 
--- Prerequisite: Install the data share from Snowflake Marketplace:
--- https://app.snowflake.com/marketplace/listing/GZSTZ491VXY
--- "Cortex Knowledge Extensions by Snowflake"
-
--- Grant access to the company event transcript search service
-GRANT USAGE ON DATABASE SNOWFLAKE_PUBLIC_DATA_CORTEX_KNOWLEDGE_EXTENSIONS TO ROLE PUBLIC;
-GRANT USAGE ON SCHEMA SNOWFLAKE_PUBLIC_DATA_CORTEX_KNOWLEDGE_EXTENSIONS.AI TO ROLE PUBLIC;
-GRANT USAGE ON CORTEX SEARCH SERVICE SNOWFLAKE_PUBLIC_DATA_CORTEX_KNOWLEDGE_EXTENSIONS.AI.COMPANY_EVENT_TRANSCRIPT_CORTEX_SEARCH_SERVICE TO ROLE PUBLIC;
-
--- Verify access to company event transcript search service
-SHOW CORTEX SEARCH SERVICES IN SCHEMA SNOWFLAKE_PUBLIC_DATA_CORTEX_KNOWLEDGE_EXTENSIONS.AI;
-
--- ========================================================================
 -- Verification and Testing
 -- ========================================================================
 -- Check that the search service was created
@@ -81,7 +60,7 @@ DESCRIBE CORTEX SEARCH SERVICE corp_mem;
 SELECT 'Testing Cortex Search service...' AS test_step;
 
 /*
--- Example search query for corp_mem (uncomment to test):
+-- Example search query (uncomment to test):
 SELECT 
     SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
         'corp_mem',
@@ -93,57 +72,35 @@ SELECT
     ) AS search_results;
 */
 
-/*
--- Example search query for company event transcripts (uncomment to test):
-SELECT 
-    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-        'SNOWFLAKE_PUBLIC_DATA_CORTEX_KNOWLEDGE_EXTENSIONS.AI.COMPANY_EVENT_TRANSCRIPT_CORTEX_SEARCH_SERVICE',
-        '{
-            "query": "Apple quarterly earnings Q2 2024",
-            "columns": ["chunk", "relative_path"],
-            "limit": 5
-        }'
-    ) AS transcript_results;
-*/
-
 -- ========================================================================
 -- Usage Instructions
 -- ========================================================================
-SELECT 'Cortex Search services configured successfully!' AS status;
-SELECT '  • corp_mem: Custom document search' AS service1;
-SELECT '  • COMPANY_EVENT_TRANSCRIPT: Earnings calls and investor presentations' AS service2;
-SELECT 'Both services can now be used as tools in your Snowflake Intelligence agent' AS next_step;
+SELECT 'Cortex Search service created successfully' AS status;
+SELECT 'The corp_mem service can now be added as a tool to your Snowflake Intelligence agent' AS next_step;
 SELECT 'Use SNOWFLAKE.CORTEX.SEARCH_PREVIEW() to test queries' AS usage_note;
 
 -- ========================================================================
 -- Search Service Information
 -- ========================================================================
--- 1. corp_mem service:
---    - Indexes uploaded documents from @OPEN_PAPERS stage
---    - Searches on "chunk" column
---    - Filter by "category" attribute if populated
---    - Example: Financial reports, investment documents, internal PDFs
--- 
--- 2. COMPANY_EVENT_TRANSCRIPT service:
---    - Pre-built by Snowflake from public data
---    - Contains earnings calls, investor presentations, conference transcripts
---    - Covers major publicly traded companies
---    - Regularly updated with new transcripts
+-- The corp_mem service indexes the "chunk" column for semantic search
+-- You can filter results by "category" attribute if populated
 -- 
 -- Example usage from SQL:
---   -- Search custom documents
 --   SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
 --       'corp_mem',
 --       '{"query": "revenue analysis", "columns": ["chunk", "relative_path"], "limit": 3}'
 --   );
 --
---   -- Search company transcripts
---   SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
---       'SNOWFLAKE_PUBLIC_DATA_CORTEX_KNOWLEDGE_EXTENSIONS.AI.COMPANY_EVENT_TRANSCRIPT_CORTEX_SEARCH_SERVICE',
---       '{"query": "Tesla earnings guidance", "columns": ["chunk"], "limit": 3}'
---   );
+-- When added to the agent, it will automatically search relevant documents
+-- based on user questions and incorporate findings into responses.
 --
--- When added to the agent, both services will automatically search based on
--- user questions and incorporate findings into comprehensive investment analysis.
+-- OPTIONAL: Company Event Transcript Search
+-- ========================================
+-- You can optionally add earnings call transcripts via Snowflake UI:
+-- 1. Install "Cortex Knowledge Extensions" from Snowflake Marketplace
+-- 2. After agent creation, edit the agent in AI & ML > Agents
+-- 3. Add Cortex Search tool pointing to:
+--    SNOWFLAKE_PUBLIC_DATA_CORTEX_KNOWLEDGE_EXTENSIONS.AI.COMPANY_EVENT_TRANSCRIPT_CORTEX_SEARCH_SERVICE
+-- 4. See docs/AGENT_SETUP.md for detailed instructions
 -- ========================================================================
 
