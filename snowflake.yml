@@ -1,0 +1,31 @@
+# Snowflake CLI Configuration for Investment Analysis Agent
+# 
+# This is a minimal configuration file for Snow CLI compatibility.
+# The snowflake.yml is optional - you can specify connection directly in commands.
+#
+# Usage with connection specified in command:
+#   snow sql -c mcastro -f sql_scripts/setup_all.sql
+#   snow sql --connection mcastro -f sql_scripts/01_setup_database.sql
+#
+# Prerequisites:
+#   1. Install Snow CLI: https://docs.snowflake.com/en/developer-guide/snowflake-cli/index
+#   2. Configure connection: snow connection add (already done: 'mcastro')
+#   3. Ensure connection has appropriate role and warehouse access
+#
+# Required privileges:
+#   - CREATE DATABASE
+#   - CREATE INTEGRATION (ACCOUNTADMIN for external access)
+#   - USAGE ON DATABASE snowflake_intelligence
+#   - CREATE SCHEMA, TABLE, FUNCTION, STAGE
+#
+# Required data shares:
+#   - SNOWFLAKE_PUBLIC_DATA_PAID.PUBLIC_DATA (from Snowflake Marketplace)
+#
+# Notes:
+# - All SQL scripts are idempotent and can be re-run safely
+# - External access integration requires ACCOUNTADMIN role
+# - Cortex features require appropriate region/cross-region inference enabled
+# - Agent must be configured via Snowflake UI after running setup scripts
+
+definition_version: 1
+
