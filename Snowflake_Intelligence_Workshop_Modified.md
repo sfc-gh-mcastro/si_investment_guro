@@ -43,6 +43,14 @@ There are several ways you can use public unstructured data with Snowflake, duri
 
 ![image-20251115112554534](./assets/image-20251115112554534.png)
 
+
+
+### [Snowflake Cortex Knowledge Extensions](https://app.snowflake.com/marketplace/listing/GZTSZ290BV65X/snowflake-public-data-products-snowflake-public-data-cortex-knowledge-extensions)
+
+This listing provides a Cortex Knowledge Extension allowing you to ask questions about company event transcripts (e.g., quarterly earning calls) and get back summarized, cited answers in your AI assistant and agentic applications built on Snowflake Cortex AI.
+
+![image-20251115115400881](./assets/image-20251115115400881.png)
+
 #### Snowflake Public data
 
 
