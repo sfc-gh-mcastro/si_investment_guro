@@ -2,6 +2,10 @@
 
 A comprehensive Snowflake Intelligence solution for investment analysis using SEC filing data, powered by Cortex Analyst, Cortex Search, and web scraping capabilities.
 
+Al credits to [Leif Engdell](mailto:leif.engdell@snowflake.com) which created the workshop instructions.
+
+Latest update: 20251115
+
 ## Overview
 
 This project provides a production-ready deployment of a Snowflake Intelligence agent that can:

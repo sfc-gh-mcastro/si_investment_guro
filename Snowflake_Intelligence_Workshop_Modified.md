@@ -40,7 +40,7 @@ This listing provides a Cortex Knowledge Extension allowing you to ask questions
 
 ## Setting up Workshop
 
-See [Readme](./Readme.md).
+See [README.md](./README.md).
 
 ### Issues
 
