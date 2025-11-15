@@ -13,34 +13,36 @@ This project provides a production-ready deployment of a Snowflake Intelligence 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│           Snowflake Investment Guro Agent                    │
-│    (Automatically created via agent_scripts/create_agent.sql)│
-└────────────┬────────────────┬────────────────┬──────────────┘
-             │                │                │
-             ▼                ▼                ▼
-    ┌────────────────┐ ┌─────────────┐ ┌──────────────────┐
-    │ Cortex Analyst │ │Cortex Search│ │  Web Functions   │
-    │   (Text2SQL)   │ │  (corp_mem) │ │ (scrape/search)  │
-    └────────┬───────┘ └──────┬──────┘ └────────┬─────────┘
-             │                │                  │
-             ▼                ▼                  ▼
-    ┌────────────────┐ ┌─────────────┐ ┌──────────────────┐
-    │  Semantic View │ │Document Stage│ │External Access   │
-    │SEC_REVENUE_... │ │ @OPEN_PAPERS │ │  Integration     │
-    └────────┬───────┘ └──────┬──────┘ └──────────────────┘
-             │                │
-             ▼                ▼
-    ┌────────────────┐ ┌─────────────┐
-    │ Dynamic Table  │ │PDF Documents│
-    │SEC_METRICS_... │ │  (Parsed)   │
-    └────────┬───────┘ └─────────────┘
-             │
-             ▼
-    ┌────────────────────────────────────┐
-    │   SNOWFLAKE_PUBLIC_DATA_PAID       │
-    │   SEC_METRICS_TIMESERIES           │
-    └────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────┐
+│              Snowflake Investment Guro Agent                       │
+│       (Automatically created via agent_scripts/create_agent.sql)   │
+└──────┬────────────────┬─────────────────┬────────────────┬────────┘
+       │                │                 │                │
+       ▼                ▼                 ▼                ▼
+┌──────────────┐ ┌────────────┐ ┌───────────────┐ ┌──────────────┐
+│   Cortex     │ │  Cortex    │ │Cortex Search  │ │Web Functions │
+│   Analyst    │ │  Search    │ │Company Events │ │scrape/search │
+│ (Text2SQL)   │ │ (corp_mem) │ │  Transcripts  │ │              │
+└──────┬───────┘ └─────┬──────┘ └───────┬───────┘ └──────┬───────┘
+       │               │                │                 │
+       ▼               ▼                │                 ▼
+┌──────────────┐ ┌────────────┐        │          ┌──────────────┐
+│ Semantic View│ │  Document  │        │          │  External    │
+│SEC_REVENUE_..│ │   Stage    │        │          │   Access     │
+│              │ │@OPEN_PAPERS│        │          │ Integration  │
+└──────┬───────┘ └─────┬──────┘        │          └──────────────┘
+       │               │                │
+       ▼               ▼                ▼
+┌──────────────┐ ┌────────────┐ ┌──────────────────────────────┐
+│Dynamic Table │ │    PDF     │ │SNOWFLAKE_PUBLIC_DATA_        │
+│SEC_METRICS_..│ │ Documents  │ │CORTEX_KNOWLEDGE_EXTENSIONS   │
+└──────┬───────┘ └────────────┘ │Earnings Calls & Presentations│
+       │                         └──────────────────────────────┘
+       ▼
+┌──────────────────────────────────┐
+│  SNOWFLAKE_PUBLIC_DATA_PAID      │
+│   SEC_METRICS_TIMESERIES         │
+└──────────────────────────────────┘
 ```
 
 ## Prerequisites
@@ -52,9 +54,18 @@ This project provides a production-ready deployment of a Snowflake Intelligence 
 - **Warehouse**: `COMPUTE_WH` (or modify scripts to create/use different warehouse)
 
 ### 2. Data Marketplace Access
-- **Required**: [Snowflake Public Data (Paid)](https://app.snowflake.com/marketplace/listing/GZTSZ290BUXPL/snowflake-public-data-products-snowflake-public-data-paid)
-  - Click "Get Data" and grant access to PUBLIC role
-  - Provides `SNOWFLAKE_PUBLIC_DATA_PAID.PUBLIC_DATA.SEC_METRICS_TIMESERIES`
+
+**Required Data Shares**:
+
+1. **[Snowflake Public Data (Paid)](https://app.snowflake.com/marketplace/listing/GZTSZ290BUXPL/snowflake-public-data-products-snowflake-public-data-paid)**
+   - Click "Get Data" and grant access to PUBLIC role
+   - Provides `SNOWFLAKE_PUBLIC_DATA_PAID.PUBLIC_DATA.SEC_METRICS_TIMESERIES`
+   - Source for quarterly revenue metrics
+
+2. **[Cortex Knowledge Extensions by Snowflake](https://app.snowflake.com/marketplace/listing/GZSTZ491VXY)**
+   - Click "Get Data" and grant access to PUBLIC role
+   - Provides `SNOWFLAKE_PUBLIC_DATA_CORTEX_KNOWLEDGE_EXTENSIONS.AI.COMPANY_EVENT_TRANSCRIPT_CORTEX_SEARCH_SERVICE`
+   - Includes earnings call transcripts and investor presentations for major public companies
 
 ### 3. Cross-Region Inference (Optional)
 If your region doesn't have all Cortex models available, enable cross-region inference:
@@ -223,9 +234,10 @@ The Snowflake Investment Guro agent is **automatically created** during setup. T
 2. Find **"Snowflake Investment Guro"** in the agents list
 3. Click to open and start asking questions
 
-The agent comes pre-configured with:
+The agent comes pre-configured with **5 powerful tools**:
 - ✅ **Cortex Analyst** - Query SEC Revenue Data (semantic view)
-- ✅ **Cortex Search** - Search Investment Documents (corp_mem)
+- ✅ **Cortex Search (Documents)** - Search uploaded financial reports (corp_mem)
+- ✅ **Cortex Search (Transcripts)** - Search earnings calls & investor presentations
 - ✅ **Web Search** - Find relevant web content (DuckDuckGo)
 - ✅ **Web Scraper** - Extract content from web pages
 
@@ -332,8 +344,9 @@ si_investment_guro/
 | Stage | `OPEN_PAPERS` | `sec_files.data` | Storage for PDF documents |
 | Table | `RAW_TEXT` | `sec_files.data` | Temporary parsed PDF content |
 | Table | `DOCS_CHUNKS_TABLE` | `sec_files.data` | Chunked text for search |
-| Search Service | `corp_mem` | `sec_files.data` | Vector search over documents |
-| Agent | `SNOWFLAKE_INVESTMENT_GURO` | `snowflake_intelligence.agents` | AI investment analysis agent |
+| Search Service | `corp_mem` | `sec_files.data` | Vector search over uploaded documents |
+| Search Service | `COMPANY_EVENT_TRANSCRIPT_...` | `SNOWFLAKE_PUBLIC_DATA_...` | Vector search over earnings transcripts |
+| Agent | `SNOWFLAKE_INVESTMENT_GURO` | `snowflake_intelligence.agents` | AI investment analysis agent (5 tools) |
 
 ## Sample Agent Queries
 
@@ -348,6 +361,17 @@ The **Snowflake Investment Guro** agent is ready to use immediately after setup.
 "Compare Microsoft and Amazon's quarterly revenues for 2024"
 
 "What was Tesla's revenue in Q2 2024?"
+```
+
+### Earnings Transcript Analysis
+```
+"What did Apple's CEO say about iPhone sales in their latest earnings call?"
+
+"Find Tesla's guidance on production targets from recent investor presentations"
+
+"What questions did analysts ask Microsoft about Azure growth?"
+
+"Compare management commentary on margins between Amazon and Google earnings calls"
 ```
 
 ### Document Search (if enabled)
@@ -370,11 +394,19 @@ The **Snowflake Investment Guro** agent is ready to use immediately after setup.
 
 ### Combined Analysis
 ```
-"Find Apple's Q3 2024 revenue from the SEC data, then search the web 
-for their earnings announcement and summarize key highlights"
+"Find Apple's Q3 2024 revenue from the SEC data, review what management 
+said in their earnings call about performance drivers, then search the web 
+for analyst reactions"
+
+"Compare NVIDIA's quarterly revenue growth with what their CEO said about 
+AI demand in recent earnings calls"
+
+"Show Tesla's revenue trends and summarize Elon Musk's commentary on 
+profitability targets from investor presentations"
 
 "What are the quarterly revenue trends for tech companies in our data, 
-and what are analysts saying online about the sector?"
+what are management teams saying in earnings calls, and what are analysts 
+saying online about the sector?"
 ```
 
 ## Troubleshooting
