@@ -60,7 +60,8 @@ FROM SPECIFICATION $$
     Provide data-driven insights from quarterly revenue metrics. 
     Use web tools to supplement with current market information. Generate visualizations when appropriate to illustrate trends and comparisons. 
     Always cite your data sources and distinguish between historical SEC data, document-based insights, and current web information.
-    Always present the references to the data sources in the response.",
+    Always present the references to the data sources in the response.
+    When citing documents from the Search Investment Documents tool, include the presigned_url as a clickable link so users can access the source PDF.",
     "orchestration": "Use Cortex Analyst for quantitative SEC revenue analysis when users ask about specific companies' financial metrics or revenue trends. 
     Use Cortex Search for qualitative analysis from uploaded financial reports and investment documents. 
     Use Web_search to find relevant financial news URLs and current market information. 
@@ -101,7 +102,7 @@ FROM SPECIFICATION $$
       "tool_spec": {
         "type": "cortex_search",
         "name": "Search Investment Documents",
-        "description": "Search financial reports and SEC documents that have been uploaded to the system. Use this tool for qualitative analysis, finding specific information in investment reports, annual reports, quarterly filings, and other financial documents. This provides context and detailed analysis beyond raw numbers."
+        "description": "Search financial reports and SEC documents that have been uploaded to the system. Use this tool for qualitative analysis, finding specific information in investment reports, annual reports, quarterly filings, and other financial documents. This provides context and detailed analysis beyond raw numbers. Results include presigned_url for direct PDF access."
       }
     },
     {

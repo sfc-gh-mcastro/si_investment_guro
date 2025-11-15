@@ -66,11 +66,23 @@ SELECT
         'corp_mem',
         '{
             "query": "financial statements",
-            "columns": ["chunk", "relative_path"],
+            "columns": ["chunk", "relative_path", "presigned_url"],
             "limit": 5
         }'
     ) AS search_results;
 */
+
+-- Test query to verify presigned_url is included in search results
+-- This query searches for "revenue" and returns the presigned_url along with other fields
+SELECT 
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'corp_mem',
+        '{
+            "query": "revenue",
+            "columns": ["chunk", "relative_path", "presigned_url"],
+            "limit": 3
+        }'
+    ) AS search_results;
 
 -- ========================================================================
 -- Usage Instructions
