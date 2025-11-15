@@ -14,8 +14,8 @@ This project provides a production-ready deployment of a Snowflake Intelligence 
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                  Snowflake Intelligence Agent                │
-│         (Configured via UI - see docs/AGENT_SETUP.md)        │
+│           Snowflake Investment Guro Agent                    │
+│    (Automatically created via agent_scripts/create_agent.sql)│
 └────────────┬────────────────┬────────────────┬──────────────┘
              │                │                │
              ▼                ▼                ▼
@@ -89,15 +89,17 @@ snow connection test -c mcastro
 
 ### Option 1: Automated Setup (Recommended)
 
-Run the master setup script that creates all objects:
+Run the master setup script that creates all objects **including the agent**:
 
 ```bash
 # Navigate to project directory
 cd /Users/mcastro/Documents/github/sfc-gh-mcastro/si_investment_guro
 
-# Run complete setup using Snow CLI
+# Run complete setup using Snow CLI (creates infrastructure + agent)
 snow sql -c mcastro -f sql_scripts/setup_all.sql
 ```
+
+**Note**: The agent `SNOWFLAKE_INVESTMENT_GURO` will be automatically created and ready to use in the Snowflake UI (AI & ML > Agents).
 
 ### Option 2: Manual Step-by-Step Setup
 
@@ -124,6 +126,9 @@ snow sql -c mcastro -f sql_scripts/06_create_document_stage.sql
 
 # 7. Cortex Search (after uploading documents - optional)
 # snow sql -c mcastro -f sql_scripts/07_create_cortex_search.sql
+
+# 8. Create Snowflake Intelligence Agent
+snow sql -c mcastro -f agent_scripts/create_agent.sql
 ```
 
 
@@ -210,14 +215,21 @@ After processing documents:
 snow sql -c mcastro -f sql_scripts/07_create_cortex_search.sql
 ```
 
-### 5. Create and Configure Agent
+### 5. Access Your Agent
 
-Follow the detailed instructions in [`docs/AGENT_SETUP.md`](docs/AGENT_SETUP.md) to:
-- Create the Snowflake Intelligence agent via UI
-- Add Cortex Analyst tool (semantic view)
-- Add Cortex Search tool (corp_mem service)
-- Add Web Search and Web Scrape custom function tools
-- Test the agent with sample queries
+The Snowflake Investment Guro agent is **automatically created** during setup. To use it:
+
+1. Navigate to Snowflake UI → **AI & ML** → **Agents**
+2. Find **"Snowflake Investment Guro"** in the agents list
+3. Click to open and start asking questions
+
+The agent comes pre-configured with:
+- ✅ **Cortex Analyst** - Query SEC Revenue Data (semantic view)
+- ✅ **Cortex Search** - Search Investment Documents (corp_mem)
+- ✅ **Web Search** - Find relevant web content (DuckDuckGo)
+- ✅ **Web Scraper** - Extract content from web pages
+
+**Alternative**: For manual UI-based agent configuration, see [`docs/AGENT_SETUP.md`](docs/AGENT_SETUP.md)
 
 ## Verification
 
@@ -251,6 +263,9 @@ SHOW TABLES LIKE '%CHUNKS%';
 
 -- Cortex Search (if documents uploaded)
 SHOW CORTEX SEARCH SERVICES;
+
+-- Agent
+SHOW AGENTS IN SCHEMA snowflake_intelligence.agents;
 ```
 
 ### Test Components
@@ -285,7 +300,7 @@ SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
 si_investment_guro/
 ├── README.md                              # This file
 ├── snowflake.yml                          # Snow CLI configuration
-├── sql_scripts/                           # Deployment scripts
+├── sql_scripts/                           # Infrastructure deployment scripts
 │   ├── 01_setup_database.sql             # Database and schema
 │   ├── 02_create_dynamic_table.sql       # SEC metrics dynamic table
 │   ├── 03_create_semantic_view.sql       # Semantic view for Cortex Analyst
@@ -293,9 +308,11 @@ si_investment_guro/
 │   ├── 05_create_web_functions.sql       # Web scrape and search functions
 │   ├── 06_create_document_stage.sql      # Document stage and tables
 │   ├── 07_create_cortex_search.sql       # Cortex Search service
-│   └── setup_all.sql                     # Master setup script
+│   └── setup_all.sql                     # Master setup script (runs all + agent)
+├── agent_scripts/                         # Agent deployment scripts
+│   └── create_agent.sql                  # Snowflake Investment Guro agent creation
 ├── docs/
-│   └── AGENT_SETUP.md                    # Agent configuration guide
+│   └── AGENT_SETUP.md                    # Agent configuration guide (manual/UI method)
 ├── Snowflake Intelligence Workshop.md     # Source workshop instructions
 └── Snowflake_Intelligence_Workshop.pdf    # Workshop PDF
 ```
@@ -316,10 +333,11 @@ si_investment_guro/
 | Table | `RAW_TEXT` | `sec_files.data` | Temporary parsed PDF content |
 | Table | `DOCS_CHUNKS_TABLE` | `sec_files.data` | Chunked text for search |
 | Search Service | `corp_mem` | `sec_files.data` | Vector search over documents |
+| Agent | `SNOWFLAKE_INVESTMENT_GURO` | `snowflake_intelligence.agents` | AI investment analysis agent |
 
 ## Sample Agent Queries
 
-Once your agent is configured, try these queries:
+The **Snowflake Investment Guro** agent is ready to use immediately after setup. Access it via **AI & ML > Agents** and try these queries:
 
 ### SEC Filing Analysis
 ```

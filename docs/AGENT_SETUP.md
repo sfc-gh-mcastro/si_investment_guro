@@ -1,6 +1,19 @@
 # Snowflake Intelligence Agent Setup Guide
 
-This guide provides step-by-step instructions for creating and configuring your SEC Filing Investment Analysis agent via the Snowflake UI.
+> **📌 IMPORTANT NOTE**: As of the latest version, the **Snowflake Investment Guro** agent is **automatically created** when you run the setup scripts. The agent is deployed via `agent_scripts/create_agent.sql` and is ready to use immediately in **AI & ML > Agents**.
+> 
+> **This guide is provided for reference only** - for manual/UI-based agent creation if needed, or to understand how the agent tools are configured.
+>
+> To use the pre-configured agent:
+> 1. Run the setup: `snow sql -c mcastro -f sql_scripts/setup_all.sql`
+> 2. Access the agent: Snowflake UI → **AI & ML** → **Agents** → **"Snowflake Investment Guro"**
+> 3. Start asking investment analysis questions!
+
+---
+
+## Manual Agent Configuration (Optional)
+
+This guide provides step-by-step instructions for **manually** creating and configuring a SEC Filing Investment Analysis agent via the Snowflake UI.
 
 ## Prerequisites
 
