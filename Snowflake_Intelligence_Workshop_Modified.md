@@ -7,39 +7,24 @@ For any follow up questions please feel free to reach out to your Snowflake team
 
 ## Creating a Snowflake Account
 
-Creating the trial account can be done through [signup.snowflake.com](http://signup.snowflake.com)  
-You need to choose a region and edition of Snowflake (I recommend you choose Business Critical edition or Enterprise edition) and secure the account with Multifactor Authentication.   
+Creating the trial account can be done through [signup.snowflake.com](http://signup.snowflake.com) 
+
+You need to choose a region and edition of Snowflake (I recommend you choose Business Critical edition or Enterprise edition) and secure the account with Multifactor Authentication. 
+
 Since this is a trial account you should not put any proprietary or confidential information into this account. 
 
 
-### Preparing the account for AI
 
- Depending on your region and cloud provider, all models and capabilities might not be available due to resource constraints in that geography. To connect to your trial account to all Snowflake Cortex resources you need to enable cross cloud inference by running this sql command as account admin in a worksheet:   
+## Getting Public data 
+
+There are several ways you can use public unstructured data with Snowflake, during the workshop we will look at two ways:
+
+- Trial of Snowflake Public Data, and
+- Snowflake Public Data (Cortex Knowdled Extensions)
 
 
-```sql
-ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
-```
 
-For more information on how it works please see the [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference).
-
-## Setting up Snowflake Intelligence
-
-The steps to set up Snowflake intelligence are detailed [here](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#set-up-sf-intelligence) and you can use the code below. 
-
-```sql
-CREATE DATABASE IF NOT EXISTS snowflake_intelligence;
-GRANT USAGE ON DATABASE snowflake_intelligence TO ROLE PUBLIC;
-CREATE SCHEMA IF NOT EXISTS snowflake_intelligence.agents;
-GRANT USAGE ON SCHEMA snowflake_intelligence.agents TO ROLE PUBLIC;
---CREATE WAREHOUSE COMPUTE_WH WITH warehouse_size='xsmall' AUTO_SUSPEND = 120;
-```
-
-## Public data
-
-There are several ways you can use public unstructured data with Snowflake, during the workshop we will look at two ways. 
-
-### Snowflake Data shares
+### [Snowflake Public Data (Paid)](https://app.snowflake.com/marketplace/listing/GZTSZ290BUXPL/snowflake-public-data-products-snowflake-public-data-paid?search=snowflake)
 
 ![image-20251115112554534](./assets/image-20251115112554534.png)
 
@@ -51,8 +36,31 @@ This listing provides a Cortex Knowledge Extension allowing you to ask questions
 
 ![image-20251115115400881](./assets/image-20251115115400881.png)
 
-#### Snowflake Public data
 
+
+## Setting up Workshop
+
+See [Readme](.Readme.md).
+
+
+
+
+
+The steps to set up Snowflake intelligence are detailed [here](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#set-up-sf-intelligence) and you can use the code below. 
+
+```sql
+CREATE DATABASE IF NOT EXISTS snowflake_intelligence;
+GRANT USAGE ON DATABASE snowflake_intelligence TO ROLE PUBLIC;
+CREATE SCHEMA IF NOT EXISTS snowflake_intelligence.agents;
+GRANT USAGE ON SCHEMA snowflake_intelligence.agents TO ROLE PUBLIC;
+--CREATE WAREHOUSE COMPUTE_WH WITH warehouse_size='xsmall' AUTO_SUSPEND = 120;
+```
+
+
+
+
+
+#### Snowflake Public data
 
 Let’s start with something called Cortex Knowledge Extensions.   
 This is AI ready data that be used instantly and updates automatically. We will be trying out the CKE for [Snowflake Public data](https://app.snowflake.com/marketplace/listing/GZTSZ290BV65X/snowflake-public-data-products-snowflake-public-data-cortex-knowledge-extensions).  

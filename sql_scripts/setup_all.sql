@@ -8,8 +8,9 @@
 --   1. Snow CLI installed and configured: snow connection add
 --   2. User must have ACCOUNTADMIN role (for external access integration)
 --   3. SNOWFLAKE_PUBLIC_DATA_PAID data share installed from Marketplace
---   4. COMPUTE_WH warehouse exists (or modify scripts to create it)
---   5. Cortex features enabled (cross-region inference if needed)
+--   4. SNOWFLAKE_PUBLIC_DATA_CORTEX_KNOWLEDGE_EXTENSIONS data share from Marketplace
+--   5. COMPUTE_WH warehouse exists (or modify scripts to create it)
+--   6. Cortex features enabled (cross-region inference if needed)
 --
 -- Usage:
 --   snow sql -f sql_scripts/setup_all.sql
@@ -26,8 +27,8 @@
 --   - Functions: Web_scrape, Web_search
 --   - Stage: OPEN_PAPERS
 --   - Tables: RAW_TEXT (temp), DOCS_CHUNKS_TABLE
---   - Cortex Search Service: corp_mem
---   - Agent: SNOWFLAKE_INVESTMENT_GURO
+--   - Cortex Search Services: corp_mem, COMPANY_EVENT_TRANSCRIPT
+--   - Agent: SNOWFLAKE_INVESTMENT_GURO (5 tools)
 --
 -- Post-setup:
 --   1. Upload PDF documents to @OPEN_PAPERS stage
@@ -121,7 +122,9 @@ SELECT '  • External Access Integration' AS obj5;
 SELECT '  • Functions: Web_scrape, Web_search' AS obj6;
 SELECT '  • Stage: OPEN_PAPERS' AS obj7;
 SELECT '  • Tables: RAW_TEXT, DOCS_CHUNKS_TABLE' AS obj8;
-SELECT '  • Agent: SNOWFLAKE_INVESTMENT_GURO' AS obj9;
+SELECT '  • Cortex Search: corp_mem (custom docs)' AS obj9;
+SELECT '  • Cortex Search: COMPANY_EVENT_TRANSCRIPT (public data)' AS obj10;
+SELECT '  • Agent: SNOWFLAKE_INVESTMENT_GURO (5 tools)' AS obj11;
 SELECT '' AS blank_line;
 
 SELECT 'Next steps:' AS next_steps_header;
@@ -132,11 +135,12 @@ SELECT '  4. Process documents using SQL in script 06 (if PDFs uploaded)' AS ste
 SELECT '  5. Run script 07 to create Cortex Search service (if PDFs uploaded)' AS step5;
 SELECT '' AS blank_line;
 
-SELECT 'The agent is now ready to use with these tools:' AS tools_header;
+SELECT 'The agent is now ready to use with these 5 tools:' AS tools_header;
 SELECT '  • Query SEC Revenue Data (Cortex Analyst)' AS tool1;
-SELECT '  • Search Investment Documents (Cortex Search)' AS tool2;
-SELECT '  • Search_Web (DuckDuckGo web search)' AS tool3;
-SELECT '  • Web_scraper (Extract content from web pages)' AS tool4;
+SELECT '  • Search Investment Documents (Cortex Search - corp_mem)' AS tool2;
+SELECT '  • Search Company Event Transcripts (Cortex Search - public data)' AS tool3;
+SELECT '  • Search_Web (DuckDuckGo web search)' AS tool4;
+SELECT '  • Web_scraper (Extract content from web pages)' AS tool5;
 SELECT '' AS blank_line;
 
 SELECT 'For UI-based agent configuration (alternative), see:' AS docs;
@@ -158,6 +162,10 @@ SHOW STAGES;
 SHOW TABLES LIKE '%CHUNKS%';
 SHOW AGENTS IN SCHEMA snowflake_intelligence.agents;
 
-SELECT 'Run "SHOW CORTEX SEARCH SERVICES;" after creating search service' AS search_note;
+-- Verify company event transcript search service access
+SHOW CORTEX SEARCH SERVICES IN SCHEMA SNOWFLAKE_PUBLIC_DATA_CORTEX_KNOWLEDGE_EXTENSIONS.AI;
+
+SELECT 'Run "SHOW CORTEX SEARCH SERVICES IN SCHEMA sec_files.data;" after creating corp_mem' AS search_note;
 SELECT 'Agent ready at: Snowflake UI > AI & ML > Agents > Snowflake Investment Guro' AS agent_access;
+SELECT 'Agent has 5 tools including Company Event Transcript search' AS agent_capabilities;
 
