@@ -11,6 +11,29 @@
 
 ---
 
+## Alternative Access Methods
+
+In addition to the Snowflake UI, you can access the investment analysis capabilities through the **Snowflake-managed MCP (Model Context Protocol) server**. This enables:
+
+- **Claude Desktop**: Chat with your Snowflake data directly from Claude
+- **Cursor IDE**: Access investment tools while coding
+- **Custom Applications**: Build apps using the MCP protocol
+- **Multi-Agent Systems**: Coordinate multiple AI agents
+
+The MCP server exposes 4 tools:
+1. **Cortex Analyst** - Query SEC revenue data with natural language
+2. **Cortex Search** - Semantic search over financial documents
+3. **Cortex Agent** - Full investment analysis agent (the complete Snowflake Investment Guro)
+4. **SQL Execution** - Direct SQL query capabilities
+
+**To set up MCP access**: See the comprehensive guide at [`MCP_SERVER_SETUP.md`](MCP_SERVER_SETUP.md) which covers:
+- MCP server creation
+- OAuth authentication configuration
+- Client setup (Claude Desktop, Cursor, custom apps)
+- API usage and examples
+
+---
+
 ## Manual Agent Configuration (Optional)
 
 This guide provides step-by-step instructions for **manually** creating and configuring a SEC Filing Investment Analysis agent via the Snowflake UI.
@@ -434,6 +457,8 @@ After setting up your agent:
 - [Creating Agents Guide](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#create-agent)
 - [Cortex Analyst Best Practices](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst#best-practices)
 - [Agent Tool Configuration](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#add-tools)
+- [MCP Server Setup Guide](MCP_SERVER_SETUP.md) - For external client access
+- [Snowflake MCP Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp)
 
 ---
 
@@ -443,7 +468,8 @@ If you encounter issues during agent setup:
 1. Review the main [README.md](../README.md) for prerequisites
 2. Check SQL verification queries to ensure all objects exist
 3. Verify permissions on database, schema, and functions
-4. Contact your Snowflake account team for assistance
+4. For MCP server issues, see [MCP_SERVER_SETUP.md](MCP_SERVER_SETUP.md) troubleshooting section
+5. Contact your Snowflake account team for assistance
 
 ---
 

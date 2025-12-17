@@ -49,6 +49,50 @@ This project provides a production-ready deployment of a Snowflake Intelligence 
 └──────────────────────────────────┘
 ```
 
+## MCP Server Integration
+
+This solution includes a **Snowflake-managed Model Context Protocol (MCP) server** that exposes your investment analysis tools through a standards-based interface. This enables AI agents like Claude Desktop, Cursor IDE, and custom applications to securely interact with your Snowflake data.
+
+### What is MCP?
+
+The Model Context Protocol (MCP) is an open-source standard that lets AI agents securely interact with business applications and external data systems. The Snowflake-managed MCP server provides:
+
+- **Standards-based Access**: Compatible with any MCP-compliant client
+- **OAuth 2.0 Authentication**: Enterprise-grade security
+- **Tool Discovery**: Automatic enumeration of available capabilities
+- **No Infrastructure**: Fully managed by Snowflake
+
+### Available via MCP
+
+The `SEC_INVESTMENT_MCP` server exposes 4 tools:
+
+1. **Cortex Analyst** - Natural language queries on SEC revenue data
+2. **Cortex Search** - Semantic search over financial documents
+3. **Cortex Agent** - Full investment analysis agent orchestration
+4. **SQL Execution** - Direct SQL query execution
+
+### Quick Start
+
+```bash
+# 1. Create MCP server
+snow sql -c mcastro -f sql_scripts/08_create_mcp_server.sql
+
+# 2. Configure OAuth (edit redirect URI first)
+snow sql -c mcastro -f sql_scripts/09_create_oauth_integration.sql
+
+# 3. Configure your MCP client (Claude Desktop, Cursor, etc.)
+# See docs/MCP_SERVER_SETUP.md for detailed instructions
+```
+
+### Use Cases
+
+- **Claude Desktop**: Chat with your Snowflake data from Claude
+- **Cursor IDE**: Access investment tools during development
+- **Custom Apps**: Build applications using MCP protocol
+- **Multi-Agent Systems**: Coordinate multiple AI agents
+
+**📖 Complete guide**: See [`docs/MCP_SERVER_SETUP.md`](docs/MCP_SERVER_SETUP.md) for comprehensive setup and configuration instructions.
+
 ## Prerequisites
 
 ### 1. Snowflake Account Requirements
@@ -157,6 +201,12 @@ snow sql -c mcastro -f sql_scripts/06_create_document_stage.sql
 
 # 8. Create Snowflake Intelligence Agent
 snow sql -c mcastro -f agent_scripts/create_agent.sql
+
+# 9. MCP Server (optional - for external client access)
+snow sql -c mcastro -f sql_scripts/08_create_mcp_server.sql
+
+# 10. OAuth for MCP (optional - edit redirect URI first)
+# snow sql -c mcastro -f sql_scripts/09_create_oauth_integration.sql
 ```
 
 
@@ -297,6 +347,10 @@ SHOW CORTEX SEARCH SERVICES;
 
 -- Agent
 SHOW AGENTS IN SCHEMA snowflake_intelligence.agents;
+
+-- MCP Server (if created)
+SHOW MCP SERVERS IN SCHEMA sec_files.data;
+SHOW INTEGRATIONS LIKE '%MCP_OAUTH%';
 ```
 
 ### Test Components
@@ -339,11 +393,14 @@ si_investment_guro/
 │   ├── 05_create_web_functions.sql       # Web scrape and search functions
 │   ├── 06_create_document_stage.sql      # Document stage and tables
 │   ├── 07_create_cortex_search.sql       # Cortex Search service
+│   ├── 08_create_mcp_server.sql          # MCP server for external clients
+│   ├── 09_create_oauth_integration.sql   # OAuth security for MCP
 │   └── setup_all.sql                     # Master setup script (runs all + agent)
 ├── agent_scripts/                         # Agent deployment scripts
 │   └── create_agent.sql                  # Snowflake Investment Guro agent creation
 ├── docs/
-│   └── AGENT_SETUP.md                    # Agent configuration guide (manual/UI method)
+│   ├── AGENT_SETUP.md                    # Agent configuration guide (manual/UI method)
+│   └── MCP_SERVER_SETUP.md               # MCP server setup and client configuration
 ├── Snowflake Intelligence Workshop.md     # Source workshop instructions
 └── Snowflake_Intelligence_Workshop.pdf    # Workshop PDF
 ```
@@ -365,6 +422,8 @@ si_investment_guro/
 | Table | `DOCS_CHUNKS_TABLE` | `sec_files.data` | Chunked text for search |
 | Search Service | `corp_mem` | `sec_files.data` | Vector search over uploaded documents |
 | Agent | `SNOWFLAKE_INVESTMENT_GURO` | `snowflake_intelligence.agents` | AI investment analysis agent (4 core tools) |
+| MCP Server | `SEC_INVESTMENT_MCP` | `sec_files.data` | MCP server exposing tools to external clients |
+| OAuth Integration | `SEC_INVESTMENT_MCP_OAUTH` | Account level | OAuth 2.0 authentication for MCP |
 
 ## Sample Agent Queries
 
@@ -466,6 +525,8 @@ For production deployments:
 - [Snowflake Intelligence Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
 - [Cortex Analyst Guide](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search)
+- [Snowflake MCP Server Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp)
+- [Model Context Protocol Specification](https://modelcontextprotocol.io/)
 - [Snow CLI Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-cli)
 - [Semantic View Best Practices](https://docs.snowflake.com/en/user-guide/semantic-layer/best-practices)
 
