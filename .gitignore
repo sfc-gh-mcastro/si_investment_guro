@@ -7,9 +7,11 @@ Snowflake_Intelligence_Workshop.pdf
 .env.local
 .env.*.local
 *.pat
-*_pat.py
 test/.env
 test/*_with_credentials.py
+test/*_credentials.py
+# Exclude test files with actual PAT tokens, but allow test_mcp_with_pat.py
+!test/test_mcp_with_pat.py
 
 # Python
 __pycache__/
