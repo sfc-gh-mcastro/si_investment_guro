@@ -40,8 +40,15 @@ USE WAREHOUSE COMPUTE_WH;
 --   - Custom Application:
 --     Your application's OAuth callback endpoint
 --   
---   - Multiple clients (comma-separated):
---     'http://localhost:3000/callback,http://127.0.0.1:8080/oauth/callback'
+--   - Multiple clients (space-separated):
+--     'http://localhost:3000/callback http://127.0.0.1:8080/oauth/callback'
+--
+-- IMPORTANT SECURITY NOTES:
+--   - For local development (localhost/127.0.0.1), you must set 
+--     OAUTH_ALLOW_NON_TLS_REDIRECT_URI = TRUE
+--   - For production, use HTTPS redirect URIs and set
+--     OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE (default)
+--   - Never expose OAuth integrations with non-TLS redirect URIs in production
 --
 -- IMPORTANT: Replace the placeholder below with your actual redirect URI(s)
 -- ========================================================================
@@ -70,6 +77,9 @@ CREATE OR REPLACE SECURITY INTEGRATION SEC_INVESTMENT_MCP_OAUTH
   -- For multiple clients/URIs, use space-separated list
   -- Example: 'http://localhost:3000/callback http://127.0.0.1:8080/oauth/callback'
   OAUTH_REDIRECT_URI = 'http://localhost:3000/callback http://localhost:8080/callback http://127.0.0.1:3000/oauth/callback'
+  -- Allow non-TLS redirect URIs for local development (localhost/127.0.0.1)
+  -- Set to FALSE in production with HTTPS redirect URIs
+  OAUTH_ALLOW_NON_TLS_REDIRECT_URI = TRUE
   -- Optional: Specify allowed roles (defaults to all roles user has access to)
   -- OAUTH_ALLOWED_ROLES = ('PUBLIC', 'ACCOUNTADMIN')
   -- Optional: Set token validity duration (default is 90 days)
