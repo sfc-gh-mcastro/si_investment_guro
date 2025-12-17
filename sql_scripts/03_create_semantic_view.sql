@@ -64,6 +64,10 @@ CREATE OR REPLACE SEMANTIC VIEW sec_files.data.SEC_REVENUE_SEMANTIC_VIEW
 -- Grant necessary privileges for the agent to use this semantic view
 GRANT REFERENCES, SELECT ON SEMANTIC VIEW sec_files.data.SEC_REVENUE_SEMANTIC_VIEW TO ROLE PUBLIC;
 
+-- Grant SELECT on the underlying dynamic table (required for semantic view validation)
+GRANT SELECT ON TABLE sec_files.data.SEC_METRICS_DAILY TO ROLE PUBLIC;
+GRANT SELECT ON TABLE sec_files.data.SEC_METRICS_DAILY TO ROLE ACCOUNTADMIN;
+
 -- ========================================================================
 -- Verification and Testing
 -- ========================================================================

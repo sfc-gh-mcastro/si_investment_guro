@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "snowflake-investment-guro": {
+      "url": "https://dcb76012.snowflakecomputing.com/api/v2/databases/sec_files/schemas/data/mcp-servers/SEC_INVESTMENT_MCP",
+      "headers": {
+        "Authorization": "Bearer ${SNOWFLAKE_PAT}",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      "description": "Snowflake Investment Guro - SEC filing analysis with Cortex AI",
+      "timeout": 60000
+    }
+  }
+}
+
+

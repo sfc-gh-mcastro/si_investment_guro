@@ -28,6 +28,7 @@
 --   - Tables: RAW_TEXT (temp), DOCS_CHUNKS_TABLE
 --   - Cortex Search Service: corp_mem
 --   - Agent: SNOWFLAKE_INVESTMENT_GURO (4 core tools)
+--   - MCP Server: SEC_INVESTMENT_MCP (exposes tools via MCP protocol)
 --
 -- Post-setup:
 --   1. Upload PDF documents to @OPEN_PAPERS stage
@@ -107,6 +108,24 @@ SELECT 'Note: Agent will be created with 4 core tools' AS note;
 !source ../agent_scripts/create_agent.sql;
 
 -- ========================================================================
+-- STEP 9: Create MCP Server (Optional)
+-- ========================================================================
+SELECT '========================================' AS separator;
+SELECT 'STEP 9: Creating MCP server for external client access...' AS current_step;
+SELECT 'Note: This enables AI agents to access tools via Model Context Protocol' AS note;
+
+!source 08_create_mcp_server.sql;
+
+-- ========================================================================
+-- STEP 10: Configure OAuth for MCP Server (Manual Configuration Required)
+-- ========================================================================
+SELECT '========================================' AS separator;
+SELECT 'STEP 10: OAuth configuration for MCP server...' AS current_step;
+SELECT 'Note: Script 09_create_oauth_integration.sql requires manual configuration' AS note;
+SELECT 'You must update the OAUTH_REDIRECT_URI before running it' AS redirect_note;
+SELECT 'See docs/MCP_SERVER_SETUP.md for detailed OAuth setup instructions' AS oauth_docs;
+
+-- ========================================================================
 -- Setup Complete
 -- ========================================================================
 SELECT '========================================' AS separator;
@@ -123,15 +142,17 @@ SELECT '  • Stage: OPEN_PAPERS' AS obj7;
 SELECT '  • Tables: RAW_TEXT, DOCS_CHUNKS_TABLE' AS obj8;
 SELECT '  • Cortex Search: corp_mem (custom docs)' AS obj9;
 SELECT '  • Agent: SNOWFLAKE_INVESTMENT_GURO (4 core tools)' AS obj10;
+SELECT '  • MCP Server: SEC_INVESTMENT_MCP (external access)' AS obj11;
 SELECT '' AS blank_line;
 
 SELECT 'Next steps:' AS next_steps_header;
 SELECT '  1. Access the agent via Snowflake UI: AI & ML > Agents' AS step1;
 SELECT '  2. Try sample questions with the Snowflake Investment Guro agent' AS step2;
-SELECT '  3. Optional: Add Company Event Transcript tool via UI (see README.md)' AS step3;
-SELECT '  4. Upload PDF documents to @OPEN_PAPERS stage (optional)' AS step4;
-SELECT '  5. Process documents using SQL in script 06 (if PDFs uploaded)' AS step5;
-SELECT '  6. Run script 07 to create Cortex Search service (if PDFs uploaded)' AS step6;
+SELECT '  3. Optional: Configure OAuth for MCP server (script 09, see docs/MCP_SERVER_SETUP.md)' AS step3;
+SELECT '  4. Optional: Add Company Event Transcript tool via UI (see README.md)' AS step4;
+SELECT '  5. Upload PDF documents to @OPEN_PAPERS stage (optional)' AS step5;
+SELECT '  6. Process documents using SQL in script 06 (if PDFs uploaded)' AS step6;
+SELECT '  7. Run script 07 to create Cortex Search service (if PDFs uploaded)' AS step7;
 SELECT '' AS blank_line;
 
 SELECT 'The agent is now ready to use with these 4 core tools:' AS tools_header;
@@ -164,8 +185,10 @@ SHOW FUNCTIONS LIKE 'Web_%' IN SCHEMA snowflake_intelligence.agents;
 SHOW STAGES;
 SHOW TABLES LIKE '%CHUNKS%';
 SHOW AGENTS IN SCHEMA snowflake_intelligence.agents;
+SHOW MCP SERVERS IN SCHEMA sec_files.data;
 
 SELECT 'Run "SHOW CORTEX SEARCH SERVICES IN SCHEMA sec_files.data;" after creating corp_mem' AS search_note;
 SELECT 'Agent ready at: Snowflake UI > AI & ML > Agents > Snowflake Investment Guro' AS agent_access;
 SELECT 'Agent has 4 core tools (optional 5th tool can be added via UI)' AS agent_capabilities;
+SELECT 'MCP Server exposes tools to external clients (configure OAuth via script 09)' AS mcp_info;
 
