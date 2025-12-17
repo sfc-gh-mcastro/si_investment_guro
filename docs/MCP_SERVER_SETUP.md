@@ -124,6 +124,8 @@ CREATE OR REPLACE SECURITY INTEGRATION SEC_INVESTMENT_MCP_OAUTH
   OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'
   -- UPDATE THIS LINE with your actual redirect URI
   OAUTH_REDIRECT_URI = 'http://127.0.0.1:3000/oauth/callback'
+  -- Allow non-TLS for local development (localhost/127.0.0.1)
+  OAUTH_ALLOW_NON_TLS_REDIRECT_URI = TRUE
   COMMENT = 'OAuth 2.0 integration for SEC Investment MCP server';
 ```
 
@@ -131,7 +133,10 @@ For multiple clients, use space-separated URIs:
 
 ```sql
 OAUTH_REDIRECT_URI = 'http://127.0.0.1:3000/oauth/callback http://localhost:8080/callback'
+OAUTH_ALLOW_NON_TLS_REDIRECT_URI = TRUE  -- Required for localhost
 ```
+
+**Security Note**: The `OAUTH_ALLOW_NON_TLS_REDIRECT_URI = TRUE` parameter is required for local development with `http://` redirect URIs. In production, use HTTPS redirect URIs and set this to `FALSE` (default).
 
 #### 2.3 Create OAuth Integration
 
