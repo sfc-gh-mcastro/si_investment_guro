@@ -96,9 +96,26 @@ SHOW MCP SERVERS IN SCHEMA sec_files.data;
 DESCRIBE MCP SERVER sec_files.data.SEC_INVESTMENT_MCP;
 ```
 
-### Step 2: Configure OAuth Authentication
+### Step 2: Choose Authentication Method
 
-OAuth 2.0 authentication is the recommended secure method for MCP client connections.
+The MCP server supports two authentication methods:
+
+| Method | Best For | Complexity | MFA Support |
+|--------|----------|------------|-------------|
+| **OAuth 2.0** | Production, user-facing apps | High | ⚠️ Complex with MFA |
+| **PAT (Programmatic Access Token)** | Development, testing, automation | Low | ✅ Works seamlessly |
+
+**📖 Quick Decision Guide:**
+- **Use OAuth** if you're building a production application with proper OAuth-capable clients
+- **Use PAT** if you're testing, developing, have MFA enabled, or using clients without OAuth support (like Cursor IDE)
+
+Choose the appropriate method below:
+
+---
+
+### Step 2A: Configure OAuth Authentication (Advanced)
+
+OAuth 2.0 authentication is recommended for production deployments with OAuth-capable clients.
 
 #### 2.1 Determine Your Redirect URI
 
@@ -138,7 +155,7 @@ OAUTH_ALLOW_NON_TLS_REDIRECT_URI = TRUE  -- Required for localhost
 
 **Security Note**: The `OAUTH_ALLOW_NON_TLS_REDIRECT_URI = TRUE` parameter is required for local development with `http://` redirect URIs. In production, use HTTPS redirect URIs and set this to `FALSE` (default).
 
-#### 2.3 Create OAuth Integration
+#### 2A.3 Create OAuth Integration
 
 Run the OAuth integration script as ACCOUNTADMIN:
 
@@ -146,7 +163,7 @@ Run the OAuth integration script as ACCOUNTADMIN:
 snow sql -f sql_scripts/09_create_oauth_integration.sql
 ```
 
-#### 2.4 Retrieve Client Credentials
+#### 2A.4 Retrieve Client Credentials
 
 The script will output your OAuth credentials. Save them securely:
 
@@ -159,6 +176,96 @@ Output will contain:
 - `OAUTH_CLIENT_SECRET`: Your client secret (keep secure!)
 
 **Security Note**: Never commit these credentials to version control or share them in plain text.
+
+---
+
+### Step 2B: Configure PAT Authentication (Simple - Recommended for Development)
+
+PAT (Programmatic Access Token) provides a simpler authentication method, especially useful for:
+- **Development and testing**
+- **Accounts with MFA enabled** (OAuth has WebAuthn challenges)
+- **Clients without OAuth support** (e.g., Cursor IDE)
+- **Automated scripts and CI/CD**
+
+#### 2B.1 Create a PAT in Snowflake UI
+
+1. Log into Snowflake UI
+2. Click **user profile** (top right) → **My Profile**
+3. Navigate to **Security** tab
+4. Scroll to **Programmatic Access Tokens**
+5. Click **+ Token**
+6. Configure:
+   - **Name**: "MCP Server Testing" (or similar)
+   - **Lifetime**: 30-90 days
+   - **Role**: Select appropriate role (e.g., `PUBLIC`, `ACCOUNTADMIN`)
+7. Click **Generate Token**
+8. **Copy the token immediately** (shown only once!)
+9. Store securely (environment variable, password manager)
+
+#### 2B.2 Store PAT Securely
+
+**Option 1: Environment Variable (Recommended)**
+
+```bash
+# Add to ~/.zshrc or ~/.bashrc
+export SNOWFLAKE_PAT="your_token_here"
+
+# Or for current session
+export SNOWFLAKE_PAT="your_token_here"
+```
+
+**Option 2: .env File**
+
+Create `.env` file in project root (add to `.gitignore`):
+
+```bash
+SNOWFLAKE_PAT=your_token_here
+SNOWFLAKE_ACCOUNT_URL=https://your_account.snowflakecomputing.com
+```
+
+#### 2B.3 Test PAT Authentication
+
+Use the provided test script:
+
+```bash
+# Set your PAT
+export SNOWFLAKE_PAT="your_token_here"
+
+# Run test
+python test/test_mcp_with_pat.py
+```
+
+Expected output:
+```
+✅ Configuration loaded
+✅ MCP server initialized successfully
+✅ Found 4 tools
+✅ All tests passed!
+```
+
+#### 2B.4 Using PAT with MCP Clients
+
+When configuring MCP clients (Claude Desktop, Cursor), use PAT in the authorization header:
+
+```python
+import requests
+
+headers = {
+    'Authorization': f'Bearer {PAT_TOKEN}',
+    'Content-Type': 'application/json'
+}
+
+response = requests.post(mcp_endpoint, headers=headers, json=mcp_request)
+```
+
+**📖 Complete PAT Guide**: See [`PAT_AUTHENTICATION.md`](PAT_AUTHENTICATION.md) for:
+- Detailed PAT creation steps
+- Security best practices
+- Token rotation and management
+- Troubleshooting
+- PAT vs OAuth comparison
+
+---
 
 ### Step 3: Grant Permissions
 

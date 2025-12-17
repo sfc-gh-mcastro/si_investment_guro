@@ -73,6 +73,28 @@ The `SEC_INVESTMENT_MCP` server exposes 4 tools:
 
 ### Quick Start
 
+**Option A: Using PAT Authentication (Recommended for Development)**
+
+Simpler setup, works with MFA, no OAuth complexity:
+
+```bash
+# 1. Create MCP server
+snow sql -c mcastro -f sql_scripts/08_create_mcp_server.sql
+
+# 2. Create PAT in Snowflake UI
+#    Profile → Security → + Token → Copy token
+
+# 3. Set environment variable
+export SNOWFLAKE_PAT="your_token_here"
+
+# 4. Test it works
+python test/test_mcp_with_pat.py
+```
+
+**Option B: Using OAuth Authentication (Production)**
+
+More complex, better for production applications:
+
 ```bash
 # 1. Create MCP server
 snow sql -c mcastro -f sql_scripts/08_create_mcp_server.sql
@@ -84,14 +106,34 @@ snow sql -c mcastro -f sql_scripts/09_create_oauth_integration.sql
 # See docs/MCP_SERVER_SETUP.md for detailed instructions
 ```
 
+**📖 Detailed guides:**
+- PAT setup: [`docs/PAT_AUTHENTICATION.md`](docs/PAT_AUTHENTICATION.md)
+- OAuth setup: [`docs/MCP_SERVER_SETUP.md`](docs/MCP_SERVER_SETUP.md)
+
+### Authentication Methods
+
+| Method | Best For | Setup Complexity |
+|--------|----------|------------------|
+| **PAT** | Development, testing, MFA accounts | ⭐ Simple |
+| **OAuth** | Production, user-facing apps | ⭐⭐⭐ Complex |
+
+**Why PAT for development?**
+- ✅ Works seamlessly with MFA-enabled accounts
+- ✅ No OAuth flow complexity
+- ✅ Perfect for Cursor IDE and testing
+- ✅ Quick setup (2 minutes)
+
 ### Use Cases
 
 - **Claude Desktop**: Chat with your Snowflake data from Claude
-- **Cursor IDE**: Access investment tools during development
+- **Cursor IDE**: Access investment tools during development  
 - **Custom Apps**: Build applications using MCP protocol
 - **Multi-Agent Systems**: Coordinate multiple AI agents
+- **CI/CD Pipelines**: Automate with PAT authentication
 
-**📖 Complete guide**: See [`docs/MCP_SERVER_SETUP.md`](docs/MCP_SERVER_SETUP.md) for comprehensive setup and configuration instructions.
+**📖 Complete guides**: 
+- PAT: [`docs/PAT_AUTHENTICATION.md`](docs/PAT_AUTHENTICATION.md) - Simple, works with MFA
+- OAuth: [`docs/MCP_SERVER_SETUP.md`](docs/MCP_SERVER_SETUP.md) - Advanced, for production
 
 ## Prerequisites
 
