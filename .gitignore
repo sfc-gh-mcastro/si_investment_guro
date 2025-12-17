@@ -10,6 +10,11 @@ Snowflake_Intelligence_Workshop.pdf
 test/.env
 test/*_with_credentials.py
 test/*_credentials.py
+
+# OAuth test files (contain hardcoded credentials)
+test/test_oauth*.py
+test/*oauth*.py
+
 # Exclude test files with actual PAT tokens, but allow test_mcp_with_pat.py
 !test/test_mcp_with_pat.py
 
