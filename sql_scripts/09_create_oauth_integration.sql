@@ -52,6 +52,13 @@ USE WAREHOUSE COMPUTE_WH;
 -- This creates the OAuth 2.0 integration for MCP client authentication
 --
 -- IMPORTANT: You must update the OAUTH_REDIRECT_URI value below
+-- 
+-- For Cursor IDE: The redirect URI depends on Cursor's MCP implementation
+-- Check Cursor settings or documentation for the exact URI
+-- Common patterns: http://localhost:PORT/callback
+--
+-- For Claude Desktop: http://127.0.0.1:PORT/oauth/callback
+-- (Check Claude Desktop MCP configuration for exact port)
 -- ========================================================================
 
 CREATE OR REPLACE SECURITY INTEGRATION SEC_INVESTMENT_MCP_OAUTH
@@ -60,8 +67,9 @@ CREATE OR REPLACE SECURITY INTEGRATION SEC_INVESTMENT_MCP_OAUTH
   ENABLED = TRUE
   OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'
   -- UPDATE THIS: Replace with your actual redirect URI(s)
-  -- For multiple URIs, use space-separated list: 'uri1 uri2 uri3'
-  OAUTH_REDIRECT_URI = 'http://127.0.0.1:3000/oauth/callback'
+  -- For multiple clients/URIs, use space-separated list
+  -- Example: 'http://localhost:3000/callback http://127.0.0.1:8080/oauth/callback'
+  OAUTH_REDIRECT_URI = 'http://localhost:3000/callback http://localhost:8080/callback http://127.0.0.1:3000/oauth/callback'
   -- Optional: Specify allowed roles (defaults to all roles user has access to)
   -- OAUTH_ALLOWED_ROLES = ('PUBLIC', 'ACCOUNTADMIN')
   -- Optional: Set token validity duration (default is 90 days)
