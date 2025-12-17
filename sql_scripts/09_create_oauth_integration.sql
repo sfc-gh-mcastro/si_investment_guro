@@ -76,15 +76,18 @@ CREATE OR REPLACE SECURITY INTEGRATION SEC_INVESTMENT_MCP_OAUTH
   -- UPDATE THIS: Replace with your actual redirect URI(s)
   -- For multiple clients/URIs, use space-separated list
   -- Example: 'http://localhost:3000/callback http://127.0.0.1:8080/oauth/callback'
-  OAUTH_REDIRECT_URI = 'http://localhost:3000/callback http://localhost:8080/callback http://127.0.0.1:3000/oauth/callback'
+  -- Note: localhost and 127.0.0.1 are treated as DIFFERENT by Snowflake, so we include both
+  OAUTH_REDIRECT_URI = 'http://localhost:3000/oauth/callback'
   -- Allow non-TLS redirect URIs for local development (localhost/127.0.0.1)
   -- Set to FALSE in production with HTTPS redirect URIs
   OAUTH_ALLOW_NON_TLS_REDIRECT_URI = TRUE
-  -- Optional: Specify allowed roles (defaults to all roles user has access to)
-  -- OAUTH_ALLOWED_ROLES = ('PUBLIC', 'ACCOUNTADMIN')
+  -- IMPORTANT: By default, Snowflake blocks ACCOUNTADMIN and SECURITYADMIN roles for OAuth
+  -- To allow specific roles, use PRE_AUTHORIZED_ROLES_LIST
+  -- This explicitly authorizes AICOLLEGE and other roles to use this OAuth integration
+  PRE_AUTHORIZED_ROLES_LIST = ('AICOLLEGE', 'PUBLIC')
   -- Optional: Set token validity duration (default is 90 days)
-  -- OAUTH_ISSUE_REFRESH_TOKENS = TRUE
-  -- OAUTH_REFRESH_TOKEN_VALIDITY = 7776000  -- 90 days in seconds
+  OAUTH_ISSUE_REFRESH_TOKENS = TRUE
+  OAUTH_REFRESH_TOKEN_VALIDITY = 86400  -- 24 hours (more practical for dev than 90 days)
   COMMENT = 'OAuth 2.0 integration for SEC Investment MCP server client authentication';
 
 -- ========================================================================
@@ -114,6 +117,7 @@ SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('SEC_INVESTMENT_MCP_OAUTH') AS client_cr
 
 GRANT USAGE ON INTEGRATION SEC_INVESTMENT_MCP_OAUTH TO ROLE PUBLIC;
 GRANT USAGE ON INTEGRATION SEC_INVESTMENT_MCP_OAUTH TO ROLE ACCOUNTADMIN;
+GRANT USAGE ON INTEGRATION SEC_INVESTMENT_MCP_OAUTH TO ROLE AICOLLEGE;
 
 -- ========================================================================
 -- Verification

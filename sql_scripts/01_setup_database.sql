@@ -61,3 +61,15 @@ SELECT 'Database and schema setup complete' AS status;
 SHOW DATABASES LIKE 'sec_files';
 SHOW SCHEMAS IN DATABASE sec_files;
 
+
+-- ========================================================================
+-- Network Policy
+-- ========================================================================
+
+create or replace network policy allow_all
+  allowed_ip_list = ('0.0.0.0/0');
+
+SET current_user_var = CURRENT_USER();
+ALTER USER IDENTIFIER($current_user_var) SET NETWORK_POLICY = 'ALLOW_ALL';
+
+
