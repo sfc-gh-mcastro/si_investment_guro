@@ -77,8 +77,7 @@ CREATE OR REPLACE MCP SERVER sec_files.data.SEC_INVESTMENT_MCP
         type: "SYSTEM_EXECUTE_SQL"
         description: "Execute SQL queries directly against the Snowflake database. This tool allows arbitrary SQL execution for advanced analysis, custom queries, and direct data access. Use this when you need to perform specific queries not covered by the semantic view, join data from multiple tables, or perform complex analytical operations. Note: Requires appropriate database and warehouse permissions."
         title: "SQL Execution Tool"
-  $$
-  COMMENT = 'MCP server exposing investment analysis tools through Model Context Protocol for AI agent integration';
+  $$;
 
 -- ========================================================================
 -- Grant Permissions on MCP Server
